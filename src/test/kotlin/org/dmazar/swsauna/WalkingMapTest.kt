@@ -110,9 +110,11 @@ internal class WalkingMapTest {
         fun start() {
             with(map) {
                 for (r in 0 until numRows) {
-                    for (c in 0 until numCols[r]) {
-                        assertEquals(c == 0 && r == 0, isStart(c, r))
+                    for (c in -2 .. numCols[r] + 2) {
+                        assertEquals(c == 0 && r == 0, isStart(c, r), "true for proper index and char")
                     }
+                    assertFalse(isStart(0, -1), "true for proper index and char")
+                    assertFalse(isStart(0, numRows), "true for proper index and char")
                 }
             }
         }
@@ -121,9 +123,11 @@ internal class WalkingMapTest {
         fun end() {
             with(map) {
                 for (r in 0 until numRows) {
-                    for (c in 0 until numCols[r]) {
-                        assertEquals(c == 1 && r == 1, isEnd(c, r))
+                    for (c in -2 .. numCols[r] + 2) {
+                        assertEquals(c == 1 && r == 1, isEnd(c, r), "true for proper index and char")
                     }
+                    assertFalse(isEnd(0, -1), "true for proper index and char")
+                    assertFalse(isEnd(0, numRows), "true for proper index and char")
                 }
             }
         }
@@ -132,9 +136,11 @@ internal class WalkingMapTest {
         fun vert() {
             with(map) {
                 for (r in 0 until numRows) {
-                    for (c in 0 until numCols[r]) {
-                        assertEquals(c == 1 && r == 0, isVert(c, r))
+                    for (c in -2 .. numCols[r] + 2) {
+                        assertEquals(c == 1 && r == 0, isVert(c, r), "true for proper index and char")
                     }
+                    assertFalse(isVert(0, -1), "true for proper index and char")
+                    assertFalse(isVert(0, numRows), "true for proper index and char")
                 }
             }
         }
@@ -143,9 +149,11 @@ internal class WalkingMapTest {
         fun hor() {
             with(map) {
                 for (r in 0 until numRows) {
-                    for (c in 0 until numCols[r]) {
-                        assertEquals(c == 2 && r == 0, isHor(c, r))
+                    for (c in -2 .. numCols[r] + 2) {
+                        assertEquals(c == 2 && r == 0, isHor(c, r), "true for proper index and char")
                     }
+                    assertFalse(isHor(0, -1), "true for proper index and char")
+                    assertFalse(isHor(0, numRows), "true for proper index and char")
                 }
             }
         }
@@ -154,9 +162,11 @@ internal class WalkingMapTest {
         fun cross() {
             with(map) {
                 for (r in 0 until numRows) {
-                    for (c in 0 until numCols[r]) {
-                        assertEquals(c == 0 && r == 1, isCross(c, r))
+                    for (c in -2 .. numCols[r] + 2) {
+                        assertEquals(c == 0 && r == 1, isCross(c, r), "true for proper index and char")
                     }
+                    assertFalse(isCross(0, -1), "true for proper index and char")
+                    assertFalse(isCross(0, numRows), "true for proper index and char")
                 }
             }
         }

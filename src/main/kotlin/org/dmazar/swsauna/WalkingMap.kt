@@ -1,5 +1,7 @@
 package org.dmazar.swsauna
 
+import java.lang.Exception
+
 /** Map of characters with walking path */
 class WalkingMap private constructor(val map: Array<String>) {
 
@@ -41,19 +43,26 @@ class WalkingMap private constructor(val map: Array<String>) {
     /** Array with row lengths */
     val numCols = IntArray(numRows) { row -> map[row].length }
 
-    /** @return true if char at given position is START */
-    fun isStart(col: Int, row: Int) = map[row][col] == C_START
+    /** @return true if position is valid and char at given position is START */
+    fun isStart(col: Int, row: Int) = isChar(col, row, C_START)
 
-    /** @return true if char at given position is END */
-    fun isEnd(col: Int, row: Int) = map[row][col] == C_END
+    /** @return true if position is valid and char at given position is END */
+    fun isEnd(col: Int, row: Int) = isChar(col, row, C_END)
 
-    /** @return true if char at given position is VERT */
-    fun isVert(col: Int, row: Int) = map[row][col] == C_VERT
+    /** @return true if position is valid and char at given position is VERT */
+    fun isVert(col: Int, row: Int) = isChar(col, row, C_VERT)
 
-    /** @return true if char at given position is HOR */
-    fun isHor(col: Int, row: Int) = map[row][col] == C_HOR
+    /** @return true if position is valid and char at given position is HOR */
+    fun isHor(col: Int, row: Int) = isChar(col, row, C_HOR)
 
-    /** @return true if char at given position is CROSS */
-    fun isCross(col: Int, row: Int) = map[row][col] == C_CROSS
+    /** @return true if position is valid and char at given position is CROSS */
+    fun isCross(col: Int, row: Int) = isChar(col, row, C_CROSS)
+
+    /** @return true if position is valid and char at given position is [c] */
+    private fun isChar(col: Int, row: Int, c: Char) = try {
+        map[row][col] == c
+    } catch (e: Exception) {
+        false
+    }
 
 }
