@@ -104,7 +104,7 @@ internal class WalkingMapTest {
     @Nested
     inner class Is {
 
-        private val map = WalkingMap.fromString("@|-\n+x")
+        private val map = WalkingMap.fromString("@|-\n+x\nABCDEFGH")
 
         @Test
         fun start() {
@@ -167,6 +167,24 @@ internal class WalkingMapTest {
                     }
                     assertFalse(isCross(0, -1), "true for proper index and char")
                     assertFalse(isCross(0, numRows), "true for proper index and char")
+                }
+            }
+        }
+
+        @Test
+        fun letter() {
+            with(map) {
+                for (r in 0 until numRows) {
+                    for (c in -2 .. numCols[r] + 2) {
+                        // row 2 are all letters
+                        assertEquals(
+                            r == 2 && c in 0 until numCols[r],
+                            isLetter(c, r),
+                            "true for proper index and char $r, $c"
+                        )
+                    }
+                    assertFalse(isLetter(0, -1), "true for proper index and char")
+                    assertFalse(isLetter(0, numRows), "true for proper index and char")
                 }
             }
         }

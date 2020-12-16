@@ -65,4 +65,11 @@ class WalkingMap private constructor(val map: Array<String>) {
         false
     }
 
+    /** @return true if position is valid and char is letter */
+    fun isLetter(col: Int, row: Int) = try {
+        map[row][col].isLetter() && !isEnd(col, row)
+    } catch (e: Exception) {
+        false
+    }
+
 }
