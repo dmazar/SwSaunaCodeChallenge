@@ -1,8 +1,7 @@
 package org.dmazar.swsauna
 
-import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 
 /** Test [Walker] */
 internal class WalkerTest {
@@ -54,6 +53,12 @@ internal class WalkerTest {
             nextMove()
             assertTrue(isEnd())
             // check path and letters
+            assertEquals("@x", path)
+            assertEquals("", letters)
+
+            // next move does not happen
+            nextMove()
+            assertTrue(isEnd())
             assertEquals("@x", path)
             assertEquals("", letters)
         }
