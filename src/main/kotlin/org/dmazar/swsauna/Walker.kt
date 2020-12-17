@@ -18,12 +18,13 @@ class Walker(private val map: WalkingMap) {
     val letters: String get() = _letters.joinToString("")
 
     /** Direction */
-    private enum class Dir {
+    enum class Dir {
         UNKNOWN, LEFT, RIGHT, UP, DOWN
     }
 
     /** Current moving direction */
-    private var dir = Dir.UNKNOWN
+    var dir: Dir = Dir.UNKNOWN
+        private set
 
     /** Moves to START, runs the path to the END and collects path results */
     fun findAndRunThePath() {
@@ -47,12 +48,18 @@ class Walker(private val map: WalkingMap) {
 
     /** Moves to next position */
     fun nextMove() {
+        // ignore if end
         if (isEnd()) {
             return
-        } else if (map.isStart(col, row)) {
+        }
+
+        // move according to rules for current char
+        if (map.isStart(col, row)) {
             nextMoveFromStart()
         } else if (map.isVert(col, row) || map.isHor(col, row) || map.isLetter(col, row)) {
             nextMoveVertHorLetter()
+        } else if (map.isCross(col, row)) {
+            nextMoveCross()
         }
     }
 
@@ -71,32 +78,70 @@ class Walker(private val map: WalkingMap) {
         }
     }
 
+    /** Makes next move from START */
     private fun nextMoveFromStart() {
-        // check for VERT, HOR, CROSS, END or letter around
+        nextMoveNewDirection()
+    }
+
+    /** Makes next move from VERT, HOR or letter */
+    private fun nextMoveVertHorLetter() {
+        // exception if no direction
+        if (dir == Dir.UNKNOWN) {
+            throw RuntimeException("invalid direction $dir on $row, $col")
+        }
+
+        // try to move in the same direction
+        if (!nextMoveKeepDirection()) {
+            throw RuntimeException("can not move $dir from $row, $col")
+        }
+    }
+
+    /** Makes next move from CROSS */
+    private fun nextMoveCross() {
+        // try to move in the same direction
+        if (dir != Dir.UNKNOWN && nextMoveKeepDirection()) {
+            return
+        }
+
+        // check for change in direction, but not backwards
+        nextMoveNewDirection()
+    }
+
+    /** Looks for new direction from START or CROSS */
+    private fun nextMoveNewDirection() {
+        // check for VERT, HOR, CROSS, END or letter around, but not backwards if we have previous direction
         // check for error if no path or multiple paths are possible
 
-        // check for possible paths
-        val canUp = map.isVert(col, row - 1)
+        // find possible paths
+        val canUp = dir != Dir.DOWN
+                && ( map.isVert(col, row - 1)
                 || map.isCross(col, row - 1)
                 || map.isEnd(col, row - 1)
                 || map.isLetter(col, row - 1)
-        val canDown = map.isVert(col, row + 1)
+                )
+        val canDown = dir != Dir.UP
+                && ( map.isVert(col, row + 1)
                 || map.isCross(col, row + 1)
                 || map.isEnd(col, row + 1)
                 || map.isLetter(col, row + 1)
-        val canLeft = map.isHor(col - 1, row)
+                )
+        val canLeft = dir != Dir.RIGHT
+                && ( map.isHor(col - 1, row)
                 || map.isCross(col - 1, row)
                 || map.isEnd(col - 1, row)
                 || map.isLetter(col - 1, row)
-        val canRight = map.isHor(col + 1, row)
+                )
+        val canRight = dir != Dir.LEFT
+                && ( map.isHor(col + 1, row)
                 || map.isCross(col + 1, row)
                 || map.isEnd(col + 1, row)
                 || map.isLetter(col + 1, row)
+                )
 
         // count paths and throw error if != 1
         val numPaths = listOf(canUp, canDown, canLeft, canRight).filter { it }.count()
         when {
-            numPaths == 0 -> throw RuntimeException("no path")
+            numPaths == 0 -> throw RuntimeException("no path from $col, $row")
             numPaths > 1 -> throw RuntimeException("multiple paths from $col, $row: $numPaths")
         }
 
@@ -113,7 +158,8 @@ class Walker(private val map: WalkingMap) {
         }
     }
 
-    private fun nextMoveVertHorLetter() {
+    /** Tries to move in the same direction and returns true if it does */
+    private fun nextMoveKeepDirection(): Boolean {
         // keep the same direction
         // check for valid next char
         // ignore other chars around
@@ -122,39 +168,34 @@ class Walker(private val map: WalkingMap) {
         var deltaCol = 0
         var deltaRow = 0
         when(dir) {
-            Dir.UNKNOWN -> throw RuntimeException("invalid direction UNKNOWN on $row, $col")
             Dir.UP -> deltaRow = -1
             Dir.DOWN -> deltaRow = 1
             Dir.LEFT -> deltaCol = -1
             Dir.RIGHT -> deltaCol = 1
+            Dir.UNKNOWN -> throw RuntimeException("invalid state on $row, $col")
         }
+
+        val isLetterCrossEnd = map.isLetter(col + deltaCol, row + deltaRow)
+                || map.isCross(col + deltaCol, row + deltaRow)
+                || map.isEnd(col + deltaCol, row + deltaRow)
 
         // make a move or error
         if (dir == Dir.UP || dir == Dir.DOWN) {
             // valid chars up are VERT, LETTER, CROSS, END
-            if (map.isVert(col + deltaCol, row + deltaRow)
-                || map.isLetter(col + deltaCol, row + deltaRow)
-                || map.isCross(col + deltaCol, row + deltaRow)
-                || map.isEnd(col + deltaCol, row + deltaRow)
-            ) {
+            if (isLetterCrossEnd || map.isVert(col + deltaCol, row + deltaRow)) {
                 // move to next char, keep the direction
                 makeValidMove(col + deltaCol, row + deltaRow, dir)
-            } else {
-                throw RuntimeException("invalid char UP from $row, $col")
+                return true
             }
         } else {
             // valid chars up are HOR, LETTER, CROSS, END
-            if (map.isHor(col + deltaCol, row + deltaRow)
-                || map.isLetter(col + deltaCol, row + deltaRow)
-                || map.isCross(col + deltaCol, row + deltaRow)
-                || map.isEnd(col + deltaCol, row + deltaRow)
-            ) {
+            if (isLetterCrossEnd || map.isHor(col + deltaCol, row + deltaRow)) {
                 // move to next char, keep the direction
                 makeValidMove(col + deltaCol, row + deltaRow, dir)
-            } else {
-                throw RuntimeException("invalid char UP from $row, $col")
+                return true
             }
         }
+        return false
     }
 
 }
