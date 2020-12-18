@@ -58,10 +58,13 @@ class Walker(private val map: WalkingMap) {
 
         // move according to rules for current char
         if (map.isStart(col, row)) {
+            // find path around
             nextMoveFromStart()
-        } else if (map.isVert(col, row) || map.isHor(col, row) || map.isLetter(col, row)) {
-            nextMoveVertHorLetter()
-        } else if (map.isCross(col, row)) {
+        } else if (map.isVert(col, row) || map.isHor(col, row)) {
+            // VERT and HOR must keep direction
+            nextMoveVertHor()
+        } else if (map.isCross(col, row) || map.isLetter(col, row)) {
+            // CROSS or LETTER may keep direction or make turns
             nextMoveCross()
         }
     }
@@ -86,8 +89,8 @@ class Walker(private val map: WalkingMap) {
         nextMoveNewDirection()
     }
 
-    /** Makes next move from VERT, HOR or letter */
-    private fun nextMoveVertHorLetter() {
+    /** Makes next move from VERT or HOR */
+    private fun nextMoveVertHor() {
         // exception if no direction
         if (dir == Dir.UNKNOWN) {
             throw RuntimeException("invalid direction $dir on $row, $col")

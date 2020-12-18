@@ -89,7 +89,7 @@ internal class WalkerTest {
   x-B-+   C
       |   |
       +---+
-                      """.trimIndent(),
+            """.trimIndent(),
             "ACB",
             "@---A---+|C|+---+|+-B-x"
         ),
@@ -104,11 +104,23 @@ internal class WalkerTest {
     |      x
     |      |
     +---D--+
-                          """.trimIndent(),
+            """.trimIndent(),
             "ABCD",
             "@|A+---B--+|+--C-+|-||+---D--+|x"
         ),
 
+        // Map 3 - letters may be found on turns
+        listOf(
+            """
+  @---A---+
+          |
+  x-B-+   |
+      |   |
+      +---C
+            """.trimIndent(),
+            "ACB",
+            "@---A---+|||C---+|+-B-x"
+        )
     )
 
     @Test
