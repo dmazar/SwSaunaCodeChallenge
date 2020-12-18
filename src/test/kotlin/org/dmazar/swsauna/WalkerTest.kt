@@ -1,6 +1,5 @@
 package org.dmazar.swsauna
 
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 /** Test [Walker] */
@@ -8,59 +7,75 @@ internal class WalkerTest {
 
     @Test
     fun moveToStart() {
-        var map = WalkingMap.fromString(
+        testWalker(
             """
                 -
                       @-A
                 x-B-+   C
                     |   |
                     +---+
-            """.trimIndent()
-        )
-        with(Walker(map)) {
+                """.trimIndent()
+        ) {
             moveToStart()
-            assertEquals(6, col)
-            assertEquals(1, row)
-            // check path and letters
-            assertEquals("@", path)
-            assertEquals("", letters)
+            assertWalker(
+                expectedCol = 6,
+                expectedRow = 1,
+                expectedDir = Walker.Dir.UNKNOWN,
+                expectedPath = "@",
+                expectedLetters = "",
+                expectedIsEnd = false
+            )
         }
 
-        map = WalkingMap.fromString(
+        testWalker(
             """
                        -A
                 x-B-+   C
                     |   |
                     @ --+
-            """.trimIndent()
-        )
-        with(Walker(map)) {
+                """.trimIndent()
+        ) {
             moveToStart()
-            assertEquals(4, col)
-            assertEquals(3, row)
-            // check path and letters
-            assertEquals("@", path)
-            assertEquals("", letters)
+            assertWalker(
+                expectedCol = 4,
+                expectedRow = 3,
+                expectedDir = Walker.Dir.UNKNOWN,
+                expectedPath = "@",
+                expectedLetters = "",
+                expectedIsEnd = false
+            )
         }
     }
 
     @Test
     fun isEnd() {
-        val map = WalkingMap.fromString("@\nx")
-        with(Walker(map)) {
+        testWalker(
+            """
+                @
+                x
+                """.trimIndent()
+        ) {
             moveToStart()
-            assertFalse(isEnd())
             nextMove()
-            assertTrue(isEnd())
-            // check path and letters
-            assertEquals("@x", path)
-            assertEquals("", letters)
+            assertWalker(
+                expectedCol = 0,
+                expectedRow = 1,
+                expectedDir = Walker.Dir.DOWN,
+                expectedPath = "@x",
+                expectedLetters = "",
+                expectedIsEnd = true
+            )
 
             // next move does not happen
             nextMove()
-            assertTrue(isEnd())
-            assertEquals("@x", path)
-            assertEquals("", letters)
+            assertWalker(
+                expectedCol = 0,
+                expectedRow = 1,
+                expectedDir = Walker.Dir.DOWN,
+                expectedPath = "@x",
+                expectedLetters = "",
+                expectedIsEnd = true
+            )
         }
     }
 

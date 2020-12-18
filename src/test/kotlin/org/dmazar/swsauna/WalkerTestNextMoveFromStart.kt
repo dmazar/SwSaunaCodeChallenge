@@ -1,8 +1,10 @@
 package org.dmazar.swsauna
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 
 /** Test [Walker] move from start */
 class WalkerTestNextMoveFromStart {
@@ -10,60 +12,34 @@ class WalkerTestNextMoveFromStart {
     @Nested
     inner class Up {
 
-        @Test
-        fun vert() {
-            val map = WalkingMap.fromString(" |\n @\nx")
-            with(Walker(map)) {
-                moveToStart()
-                nextMove()
-                assertEquals(1, col)
-                assertEquals(0, row)
-                // check path and letters
-                assertEquals("@|", path)
-                assertEquals("", letters)
+        @ParameterizedTest
+        @ValueSource(chars = ['|', 'A', '+', 'x'])
+        fun validChars(char: Char) {
+            // run test for each valid char
+            val mapString = if (char == 'x') {
+                """
+                    -
+                    $char
+                    @
+                    """.trimIndent()
+            } else {
+                """
+                    x
+                    $char
+                    @
+                    """.trimIndent()
             }
-        }
-
-        @Test
-        fun cross() {
-            val map = WalkingMap.fromString(" +\n @\nx")
-            with(Walker(map)) {
+            testWalker(mapString) {
                 moveToStart()
                 nextMove()
-                assertEquals(1, col)
-                assertEquals(0, row)
-                // check path and letters
-                assertEquals("@+", path)
-                assertEquals("", letters)
-            }
-        }
-
-        @Test
-        fun letter() {
-            val map = WalkingMap.fromString(" A\n @\nx")
-            with(Walker(map)) {
-                moveToStart()
-                nextMove()
-                assertEquals(1, col)
-                assertEquals(0, row)
-                // check path and letters
-                assertEquals("@A", path)
-                assertEquals("A", letters)
-            }
-        }
-
-        @Test
-        fun end() {
-            val map = WalkingMap.fromString(" x\n @")
-            with(Walker(map)) {
-                moveToStart()
-                nextMove()
-                assertEquals(1, col)
-                assertEquals(0, row)
-                // check path and letters
-                assertEquals("@x", path)
-                assertEquals("", letters)
-                assertTrue(isEnd())
+                assertWalker(
+                    expectedCol = 0,
+                    expectedRow = 1,
+                    expectedDir = Walker.Dir.UP,
+                    expectedPath = "@$char",
+                    expectedLetters = if (char == 'A') "A" else "",
+                    expectedIsEnd = char == 'x'
+                )
             }
         }
 
@@ -72,60 +48,34 @@ class WalkerTestNextMoveFromStart {
     @Nested
     inner class Down {
 
-        @Test
-        fun vert() {
-            val map = WalkingMap.fromString(" @\n |\nx")
-            with(Walker(map)) {
-                moveToStart()
-                nextMove()
-                assertEquals(1, col)
-                assertEquals(1, row)
-                // check path and letters
-                assertEquals("@|", path)
-                assertEquals("", letters)
+        @ParameterizedTest
+        @ValueSource(chars = ['|', 'A', '+', 'x'])
+        fun validChars(char: Char) {
+            // run test for each valid char
+            val mapString = if (char == 'x') {
+                """
+                    @
+                    $char
+                    -
+                    """.trimIndent()
+            } else {
+                """
+                    @
+                    $char
+                    x
+                    """.trimIndent()
             }
-        }
-
-        @Test
-        fun cross() {
-            val map = WalkingMap.fromString(" @\n +\nx")
-            with(Walker(map)) {
+            testWalker(mapString) {
                 moveToStart()
                 nextMove()
-                assertEquals(1, col)
-                assertEquals(1, row)
-                // check path and letters
-                assertEquals("@+", path)
-                assertEquals("", letters)
-            }
-        }
-
-        @Test
-        fun letter() {
-            val map = WalkingMap.fromString(" @\n A\nx")
-            with(Walker(map)) {
-                moveToStart()
-                nextMove()
-                assertEquals(1, col)
-                assertEquals(1, row)
-                // check path and letters
-                assertEquals("@A", path)
-                assertEquals("A", letters)
-            }
-        }
-
-        @Test
-        fun end() {
-            val map = WalkingMap.fromString(" @\n x")
-            with(Walker(map)) {
-                moveToStart()
-                nextMove()
-                assertEquals(1, col)
-                assertEquals(1, row)
-                // check path and letters
-                assertEquals("@x", path)
-                assertEquals("", letters)
-                assertTrue(isEnd())
+                assertWalker(
+                    expectedCol = 0,
+                    expectedRow = 1,
+                    expectedDir = Walker.Dir.DOWN,
+                    expectedPath = "@$char",
+                    expectedLetters = if (char == 'A') "A" else "",
+                    expectedIsEnd = char == 'x'
+                )
             }
         }
 
@@ -134,60 +84,30 @@ class WalkerTestNextMoveFromStart {
     @Nested
     inner class Left {
 
-        @Test
-        fun hor() {
-            val map = WalkingMap.fromString(" -@\nx")
-            with(Walker(map)) {
-                moveToStart()
-                nextMove()
-                assertEquals(1, col)
-                assertEquals(0, row)
-                // check path and letters
-                assertEquals("@-", path)
-                assertEquals("", letters)
+        @ParameterizedTest
+        @ValueSource(chars = ['-', 'A', '+', 'x'])
+        fun validChars(char: Char) {
+            // run test for each valid char
+            val mapString = if (char == 'x') {
+                """
+                    -$char@
+                    """.trimIndent()
+            } else {
+                """
+                    x$char@
+                    """.trimIndent()
             }
-        }
-
-        @Test
-        fun cross() {
-            val map = WalkingMap.fromString(" +@\nx")
-            with(Walker(map)) {
+            testWalker(mapString) {
                 moveToStart()
                 nextMove()
-                assertEquals(1, col)
-                assertEquals(0, row)
-                // check path and letters
-                assertEquals("@+", path)
-                assertEquals("", letters)
-            }
-        }
-
-        @Test
-        fun letter() {
-            val map = WalkingMap.fromString(" A@\nx")
-            with(Walker(map)) {
-                moveToStart()
-                nextMove()
-                assertEquals(1, col)
-                assertEquals(0, row)
-                // check path and letters
-                assertEquals("@A", path)
-                assertEquals("A", letters)
-            }
-        }
-
-        @Test
-        fun end() {
-            val map = WalkingMap.fromString(" x@")
-            with(Walker(map)) {
-                moveToStart()
-                nextMove()
-                assertEquals(1, col)
-                assertEquals(0, row)
-                // check path and letters
-                assertEquals("@x", path)
-                assertEquals("", letters)
-                assertTrue(isEnd())
+                assertWalker(
+                    expectedCol = 1,
+                    expectedRow = 0,
+                    expectedDir = Walker.Dir.LEFT,
+                    expectedPath = "@$char",
+                    expectedLetters = if (char == 'A') "A" else "",
+                    expectedIsEnd = char == 'x'
+                )
             }
         }
 
@@ -196,60 +116,30 @@ class WalkerTestNextMoveFromStart {
     @Nested
     inner class Right {
 
-        @Test
-        fun hor() {
-            val map = WalkingMap.fromString("@-\n x")
-            with(Walker(map)) {
-                moveToStart()
-                nextMove()
-                assertEquals(1, col)
-                assertEquals(0, row)
-                // check path and letters
-                assertEquals("@-", path)
-                assertEquals("", letters)
+        @ParameterizedTest
+        @ValueSource(chars = ['-', 'A', '+', 'x'])
+        fun validChars(char: Char) {
+            // run test for each valid char
+            val mapString = if (char == 'x') {
+                """
+                    @$char-
+                    """.trimIndent()
+            } else {
+                """
+                    @${char}x
+                    """.trimIndent()
             }
-        }
-
-        @Test
-        fun cross() {
-            val map = WalkingMap.fromString("@+\n x")
-            with(Walker(map)) {
+            testWalker(mapString) {
                 moveToStart()
                 nextMove()
-                assertEquals(1, col)
-                assertEquals(0, row)
-                // check path and letters
-                assertEquals("@+", path)
-                assertEquals("", letters)
-            }
-        }
-
-        @Test
-        fun letter() {
-            val map = WalkingMap.fromString("@A\n x")
-            with(Walker(map)) {
-                moveToStart()
-                nextMove()
-                assertEquals(1, col)
-                assertEquals(0, row)
-                // check path and letters
-                assertEquals("@A", path)
-                assertEquals("A", letters)
-            }
-        }
-
-        @Test
-        fun end() {
-            val map = WalkingMap.fromString(" @x")
-            with(Walker(map)) {
-                moveToStart()
-                nextMove()
-                assertEquals(2, col)
-                assertEquals(0, row)
-                // check path and letters
-                assertEquals("@x", path)
-                assertEquals("", letters)
-                assertTrue(isEnd())
+                assertWalker(
+                    expectedCol = 1,
+                    expectedRow = 0,
+                    expectedDir = Walker.Dir.RIGHT,
+                    expectedPath = "@$char",
+                    expectedLetters = if (char == 'A') "A" else "",
+                    expectedIsEnd = char == 'x'
+                )
             }
         }
 
