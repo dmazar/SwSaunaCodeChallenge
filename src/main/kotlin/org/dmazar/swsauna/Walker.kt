@@ -29,6 +29,9 @@ class Walker(private val map: WalkingMap) {
     /** Moves to START, runs the path to the END and collects path results */
     fun findAndRunThePath() {
         moveToStart()
+        while(!isEnd()) {
+            nextMove()
+        }
     }
 
     /** @return true if reached the END of the path */
@@ -175,25 +178,16 @@ class Walker(private val map: WalkingMap) {
             Dir.UNKNOWN -> throw RuntimeException("invalid state on $row, $col")
         }
 
-        val isLetterCrossEnd = map.isLetter(col + deltaCol, row + deltaRow)
+        val isValid = map.isLetter(col + deltaCol, row + deltaRow)
                 || map.isCross(col + deltaCol, row + deltaRow)
                 || map.isEnd(col + deltaCol, row + deltaRow)
+                || map.isVert(col + deltaCol, row + deltaRow)
+                || map.isHor(col + deltaCol, row + deltaRow)
 
         // make a move or error
-        if (dir == Dir.UP || dir == Dir.DOWN) {
-            // valid chars up are VERT, LETTER, CROSS, END
-            if (isLetterCrossEnd || map.isVert(col + deltaCol, row + deltaRow)) {
-                // move to next char, keep the direction
-                makeValidMove(col + deltaCol, row + deltaRow, dir)
-                return true
-            }
-        } else {
-            // valid chars up are HOR, LETTER, CROSS, END
-            if (isLetterCrossEnd || map.isHor(col + deltaCol, row + deltaRow)) {
-                // move to next char, keep the direction
-                makeValidMove(col + deltaCol, row + deltaRow, dir)
-                return true
-            }
+        if (isValid) {
+            makeValidMove(col + deltaCol, row + deltaRow, dir)
+            return true
         }
         return false
     }

@@ -11,7 +11,7 @@ class WalkerTestNextMoveOnVertHorLetter {
     inner class Up {
 
         @ParameterizedTest
-        @ValueSource(chars = ['|', 'A', '+', 'x'])
+        @ValueSource(chars = ['|', '-', 'A', '+', 'x'])
         fun validCharsFromVert(char: Char) {
             val mapString = if (char == 'x') {
                 """
@@ -44,7 +44,7 @@ class WalkerTestNextMoveOnVertHorLetter {
         }
 
         @ParameterizedTest
-        @ValueSource(chars = ['|', 'B', '+', 'x'])
+        @ValueSource(chars = ['|', '-', 'B', '+', 'x'])
         fun validCharsFromLetter(char: Char) {
             val mapString = if (char == 'x') {
                 """
@@ -82,7 +82,7 @@ class WalkerTestNextMoveOnVertHorLetter {
     inner class Down {
 
         @ParameterizedTest
-        @ValueSource(chars = ['|', 'A', '+', 'x'])
+        @ValueSource(chars = ['|', '-', 'A', '+', 'x'])
         fun validCharsFromVert(char: Char) {
             val mapString = if (char == 'x') {
                 """
@@ -115,7 +115,7 @@ class WalkerTestNextMoveOnVertHorLetter {
         }
 
         @ParameterizedTest
-        @ValueSource(chars = ['|', 'B', '+', 'x'])
+        @ValueSource(chars = ['|', '-', 'B', '+', 'x'])
         fun validCharsFromLetter(char: Char) {
             val mapString = if (char == 'x') {
                 """
@@ -153,7 +153,7 @@ class WalkerTestNextMoveOnVertHorLetter {
     inner class Left {
 
         @ParameterizedTest
-        @ValueSource(chars = ['-', 'A', '+', 'x'])
+        @ValueSource(chars = ['|', '-', 'A', '+', 'x'])
         fun validCharsFromHor(char: Char) {
             val mapString = if (char == 'x') {
                 """
@@ -180,7 +180,7 @@ class WalkerTestNextMoveOnVertHorLetter {
         }
 
         @ParameterizedTest
-        @ValueSource(chars = ['-', 'B', '+', 'x'])
+        @ValueSource(chars = ['|', '-', 'B', '+', 'x'])
         fun validCharsFromLetter(char: Char) {
             val mapString = if (char == 'x') {
                 """
@@ -212,7 +212,7 @@ class WalkerTestNextMoveOnVertHorLetter {
     inner class Right {
 
         @ParameterizedTest
-        @ValueSource(chars = ['-', 'A', '+', 'x'])
+        @ValueSource(chars = ['|', '-', 'A', '+', 'x'])
         fun validCharsFromHor(char: Char) {
             val mapString = if (char == 'x') {
                 """
@@ -239,7 +239,7 @@ class WalkerTestNextMoveOnVertHorLetter {
         }
 
         @ParameterizedTest
-        @ValueSource(chars = ['-', 'B', '+', 'x'])
+        @ValueSource(chars = ['|', '-', 'B', '+', 'x'])
         fun validCharsFromLetter(char: Char) {
             val mapString = if (char == 'x') {
                 """
