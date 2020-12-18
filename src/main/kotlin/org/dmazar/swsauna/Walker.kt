@@ -59,13 +59,23 @@ class Walker(private val map: WalkingMap) {
         // move according to rules for current char
         if (map.isStart(col, row)) {
             // find path around
-            nextMoveFromStart()
+            nextMoveNewDirection()
         } else if (map.isVert(col, row) || map.isHor(col, row)) {
             // VERT and HOR must keep direction
-            nextMoveVertHor()
-        } else if (map.isCross(col, row) || map.isLetter(col, row)) {
-            // CROSS or LETTER may keep direction or make turns
-            nextMoveCross()
+            // try to move in the same direction
+            if (!nextMoveKeepDirection()) {
+                throw RuntimeException("can not move $dir from $row, $col")
+            }
+        } else if (map.isLetter(col, row)) {
+            // LETTER may keep direction or make turns
+            if (dir != Dir.UNKNOWN && nextMoveKeepDirection()) {
+                return
+            }
+            // check for change in direction, but not backwards
+            nextMoveNewDirection()
+        } else if (map.isCross(col, row)) {
+            // CROSS must make turn
+            nextMoveNewDirection()
         }
     }
 
@@ -82,35 +92,6 @@ class Walker(private val map: WalkingMap) {
         if (map.isLetter(col, row) && !_letters.contains(currentChar)) {
             _letters += currentChar
         }
-    }
-
-    /** Makes next move from START */
-    private fun nextMoveFromStart() {
-        nextMoveNewDirection()
-    }
-
-    /** Makes next move from VERT or HOR */
-    private fun nextMoveVertHor() {
-        // exception if no direction
-        if (dir == Dir.UNKNOWN) {
-            throw RuntimeException("invalid direction $dir on $row, $col")
-        }
-
-        // try to move in the same direction
-        if (!nextMoveKeepDirection()) {
-            throw RuntimeException("can not move $dir from $row, $col")
-        }
-    }
-
-    /** Makes next move from CROSS */
-    private fun nextMoveCross() {
-        // try to move in the same direction
-        if (dir != Dir.UNKNOWN && nextMoveKeepDirection()) {
-            return
-        }
-
-        // check for change in direction, but not backwards
-        nextMoveNewDirection()
     }
 
     /** Looks for new direction from START or CROSS */
@@ -178,7 +159,7 @@ class Walker(private val map: WalkingMap) {
             Dir.DOWN -> deltaRow = 1
             Dir.LEFT -> deltaCol = -1
             Dir.RIGHT -> deltaCol = 1
-            Dir.UNKNOWN -> throw RuntimeException("invalid state on $row, $col")
+            Dir.UNKNOWN -> throw RuntimeException("invalid direction $dir on $row, $col")
         }
 
         val isValid = map.isLetter(col + deltaCol, row + deltaRow)
