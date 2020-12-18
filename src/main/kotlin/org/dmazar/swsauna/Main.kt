@@ -18,5 +18,6 @@ fun main() {
     walker.findAndRunThePath()
 
     // print the result
-    println("Start: ${walker.row}, ${walker.col}")
+    println("Path: ${walker.path}")
+    println("Letters: ${walker.letters}")
 }
