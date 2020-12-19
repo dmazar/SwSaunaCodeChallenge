@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
-/** Test [Walker] move when on CROSS or letter */
-class WalkerTestNextMoveOnCrossLetter {
+/** Test [Walker] change direction when on CROSS or letter */
+class WalkerTestChangeDirectionOnCrossLetter {
 
     @Nested
     inner class ChangeDirectionCross {
@@ -320,6 +320,44 @@ class WalkerTestNextMoveOnCrossLetter {
                     expectedLetters = if (char == 'A') "BA" else "B",
                     expectedIsEnd = char == 'x'
                 )
+            }
+        }
+
+        @Test
+        fun noPathError() {
+            // run test for each valid char
+            val mapString =
+                """
+                    @
+                    |x
+                    A
+                    """.trimIndent()
+            testWalker(mapString) {
+                moveToStart()
+                nextMove()
+                nextMove()
+                assertThrows(RuntimeException::class.java) {
+                    nextMove()
+                }
+            }
+        }
+
+        @Test
+        fun multiplePathError() {
+            // run test for each valid char
+            val mapString =
+                """
+                     @
+                     |x
+                    -A-
+                    """.trimIndent()
+            testWalker(mapString) {
+                moveToStart()
+                nextMove()
+                nextMove()
+                assertThrows(RuntimeException::class.java) {
+                    nextMove()
+                }
             }
         }
 
