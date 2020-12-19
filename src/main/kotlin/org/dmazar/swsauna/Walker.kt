@@ -1,5 +1,6 @@
 package org.dmazar.swsauna
 
+/** Walker walks over [map] by following some rules */
 class Walker(private val map: WalkingMap) {
 
     /** Position on the map: current column */
